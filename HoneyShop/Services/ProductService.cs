@@ -1,4 +1,6 @@
 ﻿using HoneyShop.Entities;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace HoneyShop.Services
 {
@@ -24,7 +26,9 @@ namespace HoneyShop.Services
 
         public IEnumerable<Product> GetByCategoryId(int categoryId)
         {
-            var category = _dbContext.Categories.FirstOrDefault(c => c.Id == categoryId);
+            var category = _dbContext.Categories
+                .Include(c => c.Products)
+                .FirstOrDefault(c => c.Id == categoryId);
 
             if (category == null)
                 throw new Exception("Not found");
