@@ -1,34 +1,51 @@
-﻿using HoneyShop.Entities;
+﻿using AutoMapper;
+using HoneyShop.Entities;
+using HoneyShop.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HoneyShop.Services
 {
     public interface IInventoryService
     {
-        IEnumerable<Inventory> GetAll();
-        Inventory GetByProductId(int productId);
+        IEnumerable<InventoryDto> GetAll();
+        InventoryDto GetByProductId(int productId);
     }
 
     public class InventoryService : IInventoryService
     {
         private readonly HoneyShopDbContext _dbContext;
+        private readonly IMapper _mapper;
 
-        public InventoryService(HoneyShopDbContext dbContext)
+        public InventoryService(HoneyShopDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
-        public IEnumerable<Inventory> GetAll()
+        public IEnumerable<InventoryDto> GetAll()
         {
-            return _dbContext.Inventory.ToList();
+            var inventories =  _dbContext.Inventory
+                .Include(i => i.Product)
+                .ThenInclude(p => p.Category)
+                .ToList();
+
+            var inventoriesDto = _mapper.Map<List<InventoryDto>>(inventories);
+
+            return inventoriesDto;
         }
 
-        public Inventory GetByProductId(int productId)
+        public InventoryDto GetByProductId(int productId)
         {
-            var inventory = _dbContext.Inventory.FirstOrDefault(x => x.ProductId == productId);
+            var inventory = _dbContext.Inventory
+                .Include(i => i.Product)
+                .ThenInclude(p => p.Category)
+                .FirstOrDefault(x => x.ProductId == productId);
             if (inventory == null)
                 throw new Exception("Not found");
 
-            return inventory;
+            var inventoryDto = _mapper.Map<InventoryDto>(inventory);
+
+            return inventoryDto;
         }
     }
 }

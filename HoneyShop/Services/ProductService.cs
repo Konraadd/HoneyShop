@@ -1,4 +1,6 @@
-﻿using HoneyShop.Entities;
+﻿using AutoMapper;
+using HoneyShop.Entities;
+using HoneyShop.Models;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -6,25 +8,33 @@ namespace HoneyShop.Services
 {
     public interface IProductService
     {
-        IEnumerable<Product> GetAll();
-        IEnumerable<Product> GetByCategoryId(int categoryId);
-        Product GetById(int id);
+        IEnumerable<ProductDto> GetAll();
+        IEnumerable<ProductDto> GetByCategoryId(int categoryId);
+        ProductDto GetById(int id);
     }
 
     public class ProductService : IProductService
     {
         private readonly HoneyShopDbContext _dbContext;
+        private readonly IMapper _mapper;
 
-        public ProductService(HoneyShopDbContext honeyShopDbContext)
+        public ProductService(HoneyShopDbContext honeyShopDbContext, IMapper mapper)
         {
             _dbContext = honeyShopDbContext;
+            _mapper = mapper;
         }
-        public IEnumerable<Product> GetAll()
+        public IEnumerable<ProductDto> GetAll()
         {
-            return _dbContext.Products.ToList();
+            var products = _dbContext.Products
+                .Include(p => p.Category)
+                .ToList();
+
+            var productsDto = _mapper.Map<List<ProductDto>>(products);
+
+            return productsDto;
         }
 
-        public IEnumerable<Product> GetByCategoryId(int categoryId)
+        public IEnumerable<ProductDto> GetByCategoryId(int categoryId)
         {
             var category = _dbContext.Categories
                 .Include(c => c.Products)
@@ -33,18 +43,24 @@ namespace HoneyShop.Services
             if (category == null)
                 throw new Exception("Not found");
 
-            return category.Products.ToList();
+            var products = category.Products.ToList();
+
+            var productsDto = _mapper.Map<List<ProductDto>>(products);
+
+            return productsDto;
         }
 
-        public Product GetById(int id)
+        public ProductDto GetById(int id)
         {
-            var product = _dbContext.Products.FirstOrDefault(c => c.Id == id);
+            var product = _dbContext.Products
+                .Include(p => p.Category)
+                .FirstOrDefault(c => c.Id == id);
             if (product == null)
                 throw new Exception("Not found");
 
-            return product;
+            var productDto = _mapper.Map<ProductDto>(product);
+
+            return productDto;
         }
     }
-
-
 }

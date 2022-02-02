@@ -1,4 +1,6 @@
-﻿namespace HoneyShop.Models
+﻿using HoneyShop.Entities;
+
+namespace HoneyShop.Models
 {
     public class ProductDto
     {
