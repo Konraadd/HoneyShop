@@ -37,5 +37,19 @@ namespace HoneyShop.Controllers
 
             return Created($"api/category/{newCategoryId}", null);
         }
+
+        [HttpPut("{id}")]
+        public ActionResult Update([FromBody] ModifyCategoryDto dto, [FromRoute]int id)
+        {
+            _categoryService.Update(dto, id);
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete([FromRoute]int id)
+        {
+            _categoryService.Delete(id); 
+            return NoContent();
+        }
     }
 }

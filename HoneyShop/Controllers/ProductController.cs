@@ -43,5 +43,19 @@ namespace HoneyShop.Controllers
 
             return Created($"api/product/{newProductId}", null);
         }
+
+        [HttpPut("{id}")]
+        public ActionResult Update([FromBody] ModifyProductDto dto, [FromRoute] int id)
+        {
+            _productService.Update(dto, id);
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete([FromRoute] int id)
+        {
+            _productService.Delete(id);
+            return NoContent();
+        }
     }
 }

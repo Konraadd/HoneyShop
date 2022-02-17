@@ -8,8 +8,10 @@ namespace HoneyShop.Services
     public interface ICategoryService
     {
         int Create(CreateCategoryDto dto);
+        void Delete(int id);
         CategoryDto Get(int id);
         IEnumerable<CategoryDto> GetAll();
+        void Update(ModifyCategoryDto dto, int id);
     }
 
     public class CategoryService : ICategoryService
@@ -47,6 +49,30 @@ namespace HoneyShop.Services
             _dbContext.SaveChanges();
 
             return category.Id;
+        }
+
+        public void Update(ModifyCategoryDto dto, int id)
+        {
+            var category = _dbContext.Categories.Where(c => c.Id == id).FirstOrDefault();
+
+            if (category == null)
+                throw new ArgumentException("Not found");
+
+            category.Name = dto.Name;
+            category.Description = dto.Description;
+
+            _dbContext.SaveChanges();
+        }
+
+        public void Delete(int id)
+        {
+            var category = _dbContext.Categories.Where(c => c.Id == id).FirstOrDefault();
+
+            if (category == null)
+                throw new Exception("not found");
+
+            _dbContext.Categories.Remove(category);
+            _dbContext.SaveChanges();
         }
     }
 }

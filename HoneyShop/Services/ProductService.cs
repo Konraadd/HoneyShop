@@ -9,9 +9,11 @@ namespace HoneyShop.Services
     public interface IProductService
     {
         int Create(CreateProductDto dto);
+        void Delete(int id);
         IEnumerable<ProductDto> GetAll();
         IEnumerable<ProductDto> GetByCategoryId(int categoryId);
         ProductDto GetById(int id);
+        void Update(ModifyProductDto dto, int id);
     }
 
     public class ProductService : IProductService
@@ -71,6 +73,29 @@ namespace HoneyShop.Services
             _dbContext.SaveChanges();
 
             return product.Id;
+        }
+
+        public void Update(ModifyProductDto dto, int id)
+        {
+            var product =  _dbContext.Products.Where(p => p.Id == id).FirstOrDefault();
+
+            if (product == null)
+                throw new Exception("Not Found");
+
+            product.Price = dto.Price;
+
+            _dbContext.SaveChanges();
+        }
+
+        public void Delete(int id)
+        {
+            var product = _dbContext.Products.Where(p => p.Id == id).FirstOrDefault();
+
+            if (product == null)
+                throw new Exception("not found");
+
+            _dbContext.Products.Remove(product);
+            _dbContext.SaveChanges();
         }
     }
 }
