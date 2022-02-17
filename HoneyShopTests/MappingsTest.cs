@@ -6,18 +6,18 @@ namespace HoneyShopTests
 {
     public class MappingTests
     {
-        private IMapper _sut;
+        private IMapper _mapper;
 
         [SetUp]
         public void Setup()
         {
-            _sut = new MapperConfiguration(cfg => { cfg.AddProfile<HoneyShopModelsMappingProfile>(); }).CreateMapper();
+            _mapper = new MapperConfiguration(cfg => { cfg.AddProfile<HoneyShopModelsMappingProfile>(); }).CreateMapper();
         }
 
         [Test]
-        public void Test1()
+        public void CheckMapperConfiguration()
         {
-            _sut.ConfigurationProvider.AssertConfigurationIsValid();
+            _mapper.ConfigurationProvider.AssertConfigurationIsValid();
         }
     }
 }

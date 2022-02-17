@@ -1,10 +1,11 @@
 ﻿using HoneyShop.Entities;
+using HoneyShop.Models;
 using HoneyShop.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HoneyShop.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/category")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
@@ -20,6 +21,21 @@ namespace HoneyShop.Controllers
         {
             var categories = _categoryService.GetAll();
             return Ok(categories);
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult Get([FromRoute]int id)
+        {
+            var category = _categoryService.Get(id);
+            return Ok(category);
+        }
+
+        [HttpPost]
+        public ActionResult Create(CreateCategoryDto dto)
+        {
+            int newCategoryId = _categoryService.Create(dto);
+
+            return Created($"api/category/{newCategoryId}", null);
         }
     }
 }

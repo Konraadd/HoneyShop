@@ -8,6 +8,7 @@ namespace HoneyShop.Services
 {
     public interface IProductService
     {
+        int Create(CreateProductDto dto);
         IEnumerable<ProductDto> GetAll();
         IEnumerable<ProductDto> GetByCategoryId(int categoryId);
         ProductDto GetById(int id);
@@ -61,6 +62,15 @@ namespace HoneyShop.Services
             var productDto = _mapper.Map<ProductDto>(product);
 
             return productDto;
+        }
+
+        public int Create(CreateProductDto dto)
+        {
+            var product = _mapper.Map<Product>(dto);
+            _dbContext.Products.Add(product);
+            _dbContext.SaveChanges();
+
+            return product.Id;
         }
     }
 }

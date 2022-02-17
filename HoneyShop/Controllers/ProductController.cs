@@ -1,4 +1,5 @@
-﻿using HoneyShop.Services;
+﻿using HoneyShop.Models;
+using HoneyShop.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HoneyShop.Controllers
@@ -33,6 +34,14 @@ namespace HoneyShop.Controllers
         {
             var products = _productService.GetByCategoryId(id);
             return Ok(products);
+        }
+
+        [HttpPost]
+        public ActionResult Create(CreateProductDto dto)
+        {
+            int newProductId = _productService.Create(dto);
+
+            return Created($"api/product/{newProductId}", null);
         }
     }
 }
